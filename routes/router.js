@@ -206,37 +206,35 @@ router.delete("/deleteRole/:id", async (req, res) => {
 // -------------------------------
 
 // add assign user
-router.post("/addAssignUser", (req, res, next) => {
-  // console.log(req.body);
-  // const { name, email, password, roleName } = req.body;
+router.post("/addAssignUser", async (req, res) => {
+  try {
+    let preuser = await assignUsers.findOne({ email: req.body.email });
 
-  bcrypt.hash(req.body.password, 10, (err, hash) => {
-    if (err) {
+    if (preuser) {
       return res.status(422).json({
-        message: err,
+        message: "This email already exist",
       });
-    } else {
-      const adduser = new assignUsers({
-        name: req.body.name,
-        email: req.body.email,
-        password: hash,
-        roleName: req.body.roleName,
-      });
-
-      adduser
-        .save()
-        .then((result) => {
-          res.status(201).json({
-            new_user: result,
-          });
-        })
-        .catch((err) => {
-          res.status(422).json({
-            message: err,
-          });
-        });
     }
-  });
+
+    const salt = await bcrypt.genSalt(10);
+    const secPass = await bcrypt.hash(req.body.password, salt);
+
+    const adduser = new assignUsers({
+      name: req.body.name,
+      email: req.body.email,
+      password: secPass,
+      roleName: req.body.roleName,
+    });
+
+    await adduser.save();
+    res.status(201).json({
+      new_user: result,
+    });
+  } catch (err) {
+    res.status(422).json({
+      message: err,
+    });
+  }
 });
 
 // get assign user

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const users = require("../models/userSchema");
+const notes = require("../models/noteSchema");
 const roles = require("../models/roleSchema");
 const assignUsers = require("../models/assignUserScheme");
 
@@ -11,90 +11,75 @@ const jwt = require("jsonwebtoken");
 //   console.log("connect");
 // });
 
-// add user
-router.post("/addUser", async (req, res) => {
+// add note
+router.post("/addNote", async (req, res) => {
   // console.log(req.body);
-  const { name, email, number, address } = req.body;
-
-  if (!name || !email || !number || !address) {
-    res.status(422).json("Please fill the data");
-  }
+  const { title, description } = req.body;
 
   try {
-    const preuser = await users.findOne({ email: email });
-    console.log(preuser);
+    const addnote = new notes({
+      title,
+      description,
+    });
 
-    if (preuser) {
-      res.status(422).json({
-        message: "This email is already used",
-      });
-    } else {
-      const adduser = new users({
-        name,
-        email,
-        number,
-        address,
-      });
-
-      await adduser.save();
-      res.status(201).json(adduser);
-      console.log(adduser);
-    }
+    await addnote.save();
+    res.status(201).json(addnote);
+    console.log(addnote);
   } catch (error) {
     res.status(422).json(error);
   }
 });
 
-// get user
+// get note
 router.get("/getData", async (req, res) => {
   try {
-    const userdata = await users.find();
-    res.status(201).json(userdata);
-    console.log("userdata", userdata);
+    const notedata = await notes.find();
+    res.status(201).json(notedata);
+    console.log("notedata", notedata);
   } catch (error) {
     res.status(422).json(error);
   }
 });
 
-// get individual user
-router.get("/getUser/:id", async (req, res) => {
+// get individual note
+router.get("/getNote/:id", async (req, res) => {
   try {
-    console.log("userdata", req.params);
+    console.log("notedata", req.params);
     const { id } = req.params;
 
-    const userIndividual = await users.findById({ _id: id });
-    console.log("userIndividual", userIndividual);
-    res.status(201).json(userIndividual);
+    const noteIndividual = await notes.findById({ _id: id });
+    console.log("noteIndividual", noteIndividual);
+    res.status(201).json(noteIndividual);
   } catch (error) {
     res.status(422).json(error);
   }
 });
 
-// update user
-router.patch("/updateUser/:id", async (req, res) => {
+// update note
+router.patch("/updateNote/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updatedUser = await users.findByIdAndUpdate(id, req.body, {
+    const updatedNote = await notes.findByIdAndUpdate(id, req.body, {
       new: true,
     });
 
-    console.log("updated User", updatedUser);
-    res.status(201).json(updatedUser);
+    console.log("updated Note", updatedNote);
+    res.status(201).json(updatedNote);
   } catch (error) {
     res.status(422).json(error);
   }
 });
 
-// delete user
-router.delete("/deleteUser/:id", async (req, res) => {
+// delete note
+router.delete("/deleteNote/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleteUser = await users.findByIdAndDelete({ _id: id });
+    const deleteNote = await notes.findByIdAndDelete({ _id: id });
 
-    console.log("updated User", deleteUser);
-    res.status(201).json(deleteUser);
+    console.log("deleted Note", deleteNote);
+    res.status(201).json(deleteNote);
   } catch (error) {
     res.status(422).json(error);
   }

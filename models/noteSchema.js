@@ -15,6 +15,11 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    noteStatus: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );

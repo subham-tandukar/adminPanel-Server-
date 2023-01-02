@@ -14,30 +14,51 @@ const jwt = require("jsonwebtoken");
 // add note
 router.post("/addNote", async (req, res) => {
   // console.log(req.body);
-  const { title, description } = req.body;
+  const { title, description, noteStatus } = req.body;
 
   try {
     const addnote = new notes({
       title,
       description,
+      noteStatus,
     });
 
     await addnote.save();
-    res.status(201).json(addnote);
+    res.status(201).json({
+      StatusCode: 200,
+      Message: "success",
+    });
     console.log(addnote);
   } catch (error) {
-    res.status(422).json(error);
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
   }
 });
 
 // get note
-router.get("/getData", async (req, res) => {
+router.get("/getNoteData", async (req, res) => {
   try {
-    const notedata = await notes.find();
-    res.status(201).json(notedata);
+    const { noteStatus } = req.query;
+
+    const queryObject = {};
+
+    if (noteStatus) {
+      queryObject.noteStatus = noteStatus;
+    }
+    const notedata = await notes.find(queryObject);
+    res.status(201).json({
+      NoteData: notedata.length <= 0 ? null : notedata,
+      StatusCode: 200,
+      Message: "success",
+    });
     console.log("notedata", notedata);
   } catch (error) {
-    res.status(422).json(error);
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
   }
 });
 
@@ -49,9 +70,16 @@ router.get("/getNote/:id", async (req, res) => {
 
     const noteIndividual = await notes.findById({ _id: id });
     console.log("noteIndividual", noteIndividual);
-    res.status(201).json(noteIndividual);
+    res.status(201).json({
+      NoteList: [noteIndividual],
+      StatusCode: 200,
+      Message: "success",
+    });
   } catch (error) {
-    res.status(422).json(error);
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
   }
 });
 
@@ -65,9 +93,12 @@ router.patch("/updateNote/:id", async (req, res) => {
     });
 
     console.log("updated Note", updatedNote);
-    res.status(201).json(updatedNote);
+    res.status(201).json({ StatusCode: 200, Message: "success" });
   } catch (error) {
-    res.status(422).json(error);
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
   }
 });
 
@@ -79,9 +110,12 @@ router.delete("/deleteNote/:id", async (req, res) => {
     const deleteNote = await notes.findByIdAndDelete({ _id: id });
 
     console.log("deleted Note", deleteNote);
-    res.status(201).json(deleteNote);
+    res.status(201).json({ StatusCode: 200, Message: "success" });
   } catch (error) {
-    res.status(422).json(error);
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
   }
 });
 

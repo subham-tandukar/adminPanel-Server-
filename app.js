@@ -1,12 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
-require("./db/conn");
-// const users = require("./models/userSchema");
-const roles = require("./models/roleSchema");
 const cors = require("cors");
 const router = require("./routes/router");
+const connectDB = require("./db/conn");
 
 const port = process.env.PORT || 8003;
 
@@ -19,6 +16,16 @@ app.get("/", (req, res) => {
 
 app.use(router);
 
-app.listen(port, () => {
-  console.log(`server is started at port ${port}`);
-});
+const start = async () => {
+  try {
+    await connectDB(process.env.DATABASE);
+    console.log("Connection start");
+    app.listen(port, () => {
+      console.log(`server is started at port ${port}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();

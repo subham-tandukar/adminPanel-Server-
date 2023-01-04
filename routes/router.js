@@ -17,10 +17,22 @@ router.post("/addNote", async (req, res) => {
   const { title, description, noteStatus } = req.body;
 
   try {
+    let pending = "";
+    if (noteStatus === "0") {
+      pending = "Pending";
+    }
+    let success = "";
+    if (noteStatus === "1") {
+      success = "Success";
+    }
+    let failed = "";
+    if (noteStatus === "2") {
+      failed = "Failed";
+    }
     const addnote = new notes({
       title,
       description,
-      noteStatus,
+      noteStatus: pending ? pending : success ? success : failed,
     });
 
     await addnote.save();
@@ -44,9 +56,12 @@ router.get("/getNoteData", async (req, res) => {
 
     const queryObject = {};
 
+    const noteStat = ["Pending", "Success", "Failed"];
+
     if (noteStatus) {
-      queryObject.noteStatus = noteStatus;
+      queryObject.noteStatus = noteStat[noteStatus];
     }
+
     const notedata = await notes.find(queryObject);
     res.status(201).json({
       NoteData: notedata.length <= 0 ? null : notedata,

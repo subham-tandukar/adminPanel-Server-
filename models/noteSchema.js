@@ -17,7 +17,7 @@ const noteSchema = new mongoose.Schema(
     },
 
     noteStatus: {
-      type: Number,
+      type: String,
       required: true,
     },
   },

@@ -16,13 +16,9 @@ const roleSchema = new mongoose.Schema(
       { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
     ],
 
-    assignUser: [
+    user: [
       { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
     ],
-
-    // user: [
-    //   { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
-    // ],
 
     form: [
       { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
@@ -35,10 +31,6 @@ const roleSchema = new mongoose.Schema(
     sortable: [
       { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
     ],
-
-    // dashboard: [
-    //   { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },
-    // ],
 
     slideshow: [
       { read: Boolean, write: Boolean, update: Boolean, deleted: Boolean },

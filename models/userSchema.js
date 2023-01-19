@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const assignUserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -19,10 +19,14 @@ const assignUserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // image: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
 
-const assignUsers = new mongoose.model("assignUsers", assignUserSchema);
+const users = new mongoose.model("user", userSchema);
 
-module.exports = assignUsers;
+module.exports = users;

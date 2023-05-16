@@ -261,34 +261,53 @@ router.delete("/deleteRole/:id", async (req, res) => {
 // -------------------------------
 
 // add user ---------------------------
-router.post("/addUser", async (req, res) => {
+router.post("/user", async (req, res) => {
+  const { flag, UserID } = req.body;
   try {
-    let preuser = await user.findOne({ email: req.body.email });
+    if (flag === "I") {
+      let preuser = await user.findOne({ email: req.body.email });
 
-    if (preuser) {
-      return res.status(422).json({
-        Message: "This email already exist",
+      if (preuser) {
+        return res.status(422).json({
+          Message: "This email already exist",
+        });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const secPass = await bcrypt.hash(req.body.password, salt);
+
+      const adduser = new user({
+        name: req.body.name,
+        email: req.body.email,
+        password: secPass,
+        roleName: req.body.roleName,
       });
+
+      await adduser.save();
+      res.status(201).json({
+        StatusCode: 200,
+        Message: "success",
+      });
+    } else if (flag === "U") {
+      await user.findByIdAndUpdate(UserID, req.body, {
+        new: true,
+      });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else if (flag === "S") {
+      const userdata = await user.find();
+      res.status(201).json({
+        UserData: userdata.length <= 0 ? null : userdata,
+        StatusCode: 200,
+        Message: "success",
+      });
+    } else if (flag === "D") {
+      await user.findByIdAndDelete({ _id: UserID });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else {
+      res.status(400).json({ StatusCode: 400, Message: "Invalid flag" });
     }
-
-    // const file = req.file.filename;
-
-    const salt = await bcrypt.genSalt(10);
-    const secPass = await bcrypt.hash(req.body.password, salt);
-
-    const adduser = new user({
-      name: req.body.name,
-      email: req.body.email,
-      password: secPass,
-      roleName: req.body.roleName,
-      // image: file,
-    });
-
-    await adduser.save();
-    res.status(201).json({
-      StatusCode: 200,
-      Message: "success",
-    });
   } catch (error) {
     res.status(422).json({
       StatusCode: 400,
@@ -296,6 +315,38 @@ router.post("/addUser", async (req, res) => {
     });
   }
 });
+// router.post("/addUser", async (req, res) => {
+//   try {
+//     let preuser = await user.findOne({ email: req.body.email });
+
+//     if (preuser) {
+//       return res.status(422).json({
+//         Message: "This email already exist",
+//       });
+//     }
+
+//     const salt = await bcrypt.genSalt(10);
+//     const secPass = await bcrypt.hash(req.body.password, salt);
+
+//     const adduser = new user({
+//       name: req.body.name,
+//       email: req.body.email,
+//       password: secPass,
+//       roleName: req.body.roleName,
+//     });
+
+//     await adduser.save();
+//     res.status(201).json({
+//       StatusCode: 200,
+//       Message: "success",
+//     });
+//   } catch (error) {
+//     res.status(422).json({
+//       StatusCode: 400,
+//       Message: error,
+//     });
+//   }
+// });
 
 // get user ---------------------------
 router.get("/getUserData", async (req, res) => {

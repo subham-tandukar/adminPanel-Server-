@@ -296,11 +296,32 @@ router.post("/user", async (req, res) => {
       res.status(201).json({ StatusCode: 200, Message: "success" });
     } else if (flag === "S") {
       const userdata = await user.find();
-      res.status(201).json({
-        UserData: userdata.length <= 0 ? null : userdata,
-        StatusCode: 200,
-        Message: "success",
-      });
+      if (userdata) {
+        res.status(201).json({
+          StatusCode: 200,
+          Message: "success",
+          Values: [userdata],
+        });
+      } else {
+        res.status(401).json({
+          StatusCode: 400,
+          Message: "User not found",
+        });
+      }
+    } else if (flag === "SI") {
+      const userdata = await user.findById({ _id: UserID });
+      if (userdata) {
+        res.status(201).json({
+          StatusCode: 200,
+          Message: "success",
+          Values: [userdata],
+        });
+      } else {
+        res.status(401).json({
+          StatusCode: 400,
+          Message: "User not found",
+        });
+      }
     } else if (flag === "D") {
       await user.findByIdAndDelete({ _id: UserID });
 

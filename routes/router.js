@@ -300,7 +300,7 @@ router.post("/user", async (req, res) => {
         res.status(201).json({
           StatusCode: 200,
           Message: "success",
-          Values: [userdata],
+          Values: userdata,
         });
       } else {
         res.status(401).json({

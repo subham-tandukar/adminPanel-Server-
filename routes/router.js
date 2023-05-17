@@ -477,10 +477,16 @@ router.post("/login", (req, res, next) => {
             }
           );
           res.status(201).json({
-            name: user[0].name,
-            email: user[0].email,
-            roleName: user[0].roleName,
-            token: token,
+            StatusCode: 200,
+            Message: "success",
+            Token: token,
+            Login: [
+              {
+                Name: user[0].name,
+                Email: user[0].email,
+                RoleName: user[0].roleName,
+              },
+            ],
           });
         }
       });

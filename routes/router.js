@@ -262,10 +262,10 @@ router.delete("/deleteRole/:id", async (req, res) => {
 
 // add user ---------------------------
 router.post("/user", async (req, res) => {
-  const { flag, UserID } = req.body;
+  const { flag, UserID, name, roleName, email, password } = req.body;
   try {
     if (flag === "I") {
-      let preuser = await user.findOne({ email: req.body.email });
+      let preuser = await user.findOne({ email: email });
 
       if (preuser) {
         return res.status(422).json({
@@ -274,13 +274,13 @@ router.post("/user", async (req, res) => {
       }
 
       const salt = await bcrypt.genSalt(10);
-      const secPass = await bcrypt.hash(req.body.password, salt);
+      const secPass = await bcrypt.hash(password, salt);
 
       const adduser = new user({
-        name: req.body.name,
-        email: req.body.email,
+        name,
+        email,
         password: secPass,
-        roleName: req.body.roleName,
+        roleName,
       });
 
       await adduser.save();
@@ -289,7 +289,11 @@ router.post("/user", async (req, res) => {
         Message: "success",
       });
     } else if (flag === "U") {
-      await user.findByIdAndUpdate(UserID, req.body, {
+      const update = {
+        name,
+        roleName,
+      };
+      await user.findByIdAndUpdate(UserID, update, {
         new: true,
       });
 

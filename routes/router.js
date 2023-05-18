@@ -299,7 +299,13 @@ router.post("/user", async (req, res) => {
 
       res.status(201).json({ StatusCode: 200, Message: "success" });
     } else if (flag === "S") {
-      const userdata = await user.find();
+      // const roleName = req.query.roleName;
+      let userdata;
+      if (roleName === "-1") {
+        userdata = await user.find();
+      } else if (roleName) {
+        userdata = await user.find({ roleName: roleName });
+      }
       if (userdata) {
         res.status(201).json({
           StatusCode: 200,

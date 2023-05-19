@@ -262,7 +262,7 @@ router.delete("/deleteRole/:id", async (req, res) => {
 
 // add user ---------------------------
 router.post("/user", async (req, res) => {
-  const { flag, UserID, name, roleName, email, password } = req.body;
+  const { flag, UserID, name, roleName, email, password, status } = req.body;
   try {
     if (flag === "I") {
       let preuser = await user.findOne({ email: email });
@@ -332,6 +332,15 @@ router.post("/user", async (req, res) => {
           Message: "User not found",
         });
       }
+    } else if (flag === "US") {
+      const update = {
+        status,
+      };
+      await user.findByIdAndUpdate(UserID, update, {
+        new: true,
+      });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
     } else if (flag === "D") {
       await user.findByIdAndDelete({ _id: UserID });
 

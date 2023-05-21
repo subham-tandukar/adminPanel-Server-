@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const notes = require("../models/noteSchema");
 const roles = require("../models/roleSchema");
+const rolename = require("../models/roleNameSchema");
 const user = require("../models/userSchema");
 
 const bcrypt = require("bcrypt");
@@ -515,6 +516,82 @@ router.post("/login", (req, res, next) => {
         message: err,
       });
     });
+});
+
+// add rolename ---------------------------
+router.post("/rolename", async (req, res) => {
+  const { flag, RoleID, roleName, status } = req.body;
+  try {
+    if (flag === "I") {
+      const addrole = new rolename({
+        roleName,
+      });
+
+      await addrole.save();
+      res.status(201).json({
+        StatusCode: 200,
+        Message: "success",
+      });
+    } else if (flag === "U") {
+      const update = {
+        roleName,
+      };
+      await rolename.findByIdAndUpdate(RoleID, update, {
+        new: true,
+      });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else if (flag === "S") {
+      const roledata = await rolename.find({ roleName: roleName });
+
+      if (roledata) {
+        res.status(201).json({
+          StatusCode: 200,
+          Message: "success",
+          Values: roledata,
+        });
+      } else {
+        res.status(401).json({
+          StatusCode: 400,
+          Message: "Role not found",
+        });
+      }
+    } else if (flag === "SI") {
+      const roledata = await rolename.findById({ _id: RoleID });
+      if (roledata) {
+        res.status(201).json({
+          StatusCode: 200,
+          Message: "success",
+          Values: [roledata],
+        });
+      } else {
+        res.status(401).json({
+          StatusCode: 400,
+          Message: "Role not found",
+        });
+      }
+    } else if (flag === "US") {
+      const update = {
+        status,
+      };
+      await rolename.findByIdAndUpdate(RoleID, update, {
+        new: true,
+      });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else if (flag === "D") {
+      await rolename.findByIdAndDelete({ _id: RoleID });
+
+      res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else {
+      res.status(400).json({ StatusCode: 400, Message: "Invalid flag" });
+    }
+  } catch (error) {
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
+  }
 });
 
 module.exports = router;

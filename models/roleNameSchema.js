@@ -4,7 +4,6 @@ const roleNameSchema = new mongoose.Schema({
   roleName: {
     type: String,
     required: true,
-    index: false, // Remove the unique index
   },
   status: {
     type: String,

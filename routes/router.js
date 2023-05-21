@@ -523,6 +523,14 @@ router.post("/rolename", async (req, res) => {
   const { flag, RoleID, roleName, status } = req.body;
   try {
     if (flag === "I") {
+      let preuser = await RoleName.findOne({ roleName: roleName });
+
+      if (preuser) {
+        return res.status(422).json({
+          Message: "This role already exist",
+        });
+      }
+
       const addrole = new RoleName({
         roleName,
       });

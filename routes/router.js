@@ -490,24 +490,33 @@ router.post("/login", (req, res, next) => {
               name: user[0].name,
               email: user[0].email,
               roleName: user[0].roleName,
+              status: user[0].status,
             },
             "this is dummy text",
             {
               expiresIn: "24h",
             }
           );
-          res.status(201).json({
-            StatusCode: 200,
-            Message: "success",
-            Token: token,
-            Login: [
-              {
-                Name: user[0].name,
-                Email: user[0].email,
-                RoleName: user[0].roleName,
-              },
-            ],
-          });
+
+          if (user[0].status === "1") {
+            res.status(201).json({
+              StatusCode: 200,
+              Message: "success",
+              Token: token,
+              Login: [
+                {
+                  Name: user[0].name,
+                  Email: user[0].email,
+                  RoleName: user[0].roleName,
+                  Status: user[0].status,
+                },
+              ],
+            });
+          } else {
+            res.status(422).json({
+              Message: "User deactivated ! Cannot login",
+            });
+          }
         }
       });
     })

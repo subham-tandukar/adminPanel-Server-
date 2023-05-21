@@ -302,10 +302,10 @@ router.post("/user", async (req, res) => {
     } else if (flag === "S") {
       // const roleName = req.query.roleName;
       let userdata;
-      if (roleName === "-1") {
+      if (status === "-1") {
         userdata = await user.find();
-      } else if (roleName) {
-        userdata = await user.find({ roleName: roleName });
+      } else if (status) {
+        userdata = await user.find({ status: status });
       }
       if (userdata) {
         res.status(201).json({

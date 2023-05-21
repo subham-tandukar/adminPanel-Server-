@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const notes = require("../models/noteSchema");
 const roles = require("../models/roleSchema");
-const rolename = require("../models/roleNameSchema");
+const RoleName = require("../models/roleNameSchema");
 const user = require("../models/userSchema");
 
 const bcrypt = require("bcrypt");
@@ -523,7 +523,7 @@ router.post("/rolename", async (req, res) => {
   const { flag, RoleID, roleName, status } = req.body;
   try {
     if (flag === "I") {
-      const addrole = new rolename({
+      const addrole = new RoleName({
         roleName,
       });
 
@@ -536,7 +536,7 @@ router.post("/rolename", async (req, res) => {
       const update = {
         roleName,
       };
-      await rolename.findByIdAndUpdate(RoleID, update, {
+      await RoleName.findByIdAndUpdate(RoleID, update, {
         new: true,
       });
 
@@ -544,9 +544,9 @@ router.post("/rolename", async (req, res) => {
     } else if (flag === "S") {
       let roledata;
       if (status === "-1") {
-        roledata = await rolename.find();
+        roledata = await RoleName.find();
       } else if (status) {
-        roledata = await rolename.find({ status: status });
+        roledata = await RoleName.find({ status: status });
       }
 
       if (roledata) {
@@ -562,7 +562,7 @@ router.post("/rolename", async (req, res) => {
         });
       }
     } else if (flag === "SI") {
-      const roledata = await rolename.findById({ _id: RoleID });
+      const roledata = await RoleName.findById({ _id: RoleID });
       if (roledata) {
         res.status(201).json({
           StatusCode: 200,
@@ -579,13 +579,13 @@ router.post("/rolename", async (req, res) => {
       const update = {
         status,
       };
-      await rolename.findByIdAndUpdate(RoleID, update, {
+      await RoleName.findByIdAndUpdate(RoleID, update, {
         new: true,
       });
 
       res.status(201).json({ StatusCode: 200, Message: "success" });
     } else if (flag === "D") {
-      await rolename.findByIdAndDelete({ _id: RoleID });
+      await RoleName.findByIdAndDelete({ _id: RoleID });
 
       res.status(201).json({ StatusCode: 200, Message: "success" });
     } else {

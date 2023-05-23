@@ -619,9 +619,23 @@ router.post("/rolename", async (req, res) => {
 
 // add fiscal ---------------------------
 router.post("/fiscal", async (req, res) => {
-  const { flag, FiscalID, startYear, endYear, active } = req.body;
+  const { flag, FiscalID, startYear, endYear } = req.body;
   try {
     if (flag === "I") {
+      let preuser = await fiscal.findOne({ startYear: startYear });
+      let preusers = await fiscal.findOne({ endYear: endYear });
+
+      if (preuser) {
+        return res.status(422).json({
+          Message: "This start fiscal already exist",
+        });
+      }
+      if (preusers) {
+        return res.status(422).json({
+          Message: "This end fiscal already exist",
+        });
+      }
+
       const addfiscal = new fiscal({
         startYear,
         endYear,

@@ -4,6 +4,7 @@ const notes = require("../models/noteSchema");
 const roles = require("../models/roleSchema");
 const RoleName = require("../models/roleNameSchema");
 const user = require("../models/userSchema");
+const fiscal = require("../models/fiscalSchema");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -605,6 +606,62 @@ router.post("/rolename", async (req, res) => {
       await RoleName.findByIdAndDelete({ _id: RoleID });
 
       res.status(201).json({ StatusCode: 200, Message: "success" });
+    } else {
+      res.status(400).json({ StatusCode: 400, Message: "Invalid flag" });
+    }
+  } catch (error) {
+    res.status(422).json({
+      StatusCode: 400,
+      Message: error,
+    });
+  }
+});
+
+// add fiscal ---------------------------
+router.post("/fiscal", async (req, res) => {
+  const { flag, FiscalID, startYear, endYear, active } = req.body;
+  try {
+    if (flag === "I") {
+      const addfiscal = new fiscal({
+        startYear,
+        endYear,
+      });
+
+      await addfiscal.save();
+      res.status(201).json({
+        StatusCode: 200,
+        Message: "success",
+      });
+    } else if (flag === "S") {
+      const fiscaldata = await fiscal.find();
+
+      if (fiscaldata) {
+        res.status(201).json({
+          StatusCode: 200,
+          Message: "success",
+          Values: fiscaldata,
+        });
+      } else {
+        res.status(401).json({
+          StatusCode: 400,
+          Message: "Fiscal not found",
+        });
+      }
+    } else if (flag === "US") {
+      const updatedFiscal = await fiscal.findByIdAndUpdate(
+        FiscalID,
+        { active: "Y" },
+        { new: true }
+      );
+      await fiscal.updateMany({ _id: { $ne: FiscalID } }, { active: "N" });
+
+      if (updatedFiscal) {
+        res.status(201).json({ StatusCode: 200, Message: "success" });
+      } else {
+        res
+          .status(404)
+          .json({ StatusCode: 404, Message: "Fiscal year not found" });
+      }
     } else {
       res.status(400).json({ StatusCode: 400, Message: "Invalid flag" });
     }

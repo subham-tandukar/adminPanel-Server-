@@ -619,7 +619,7 @@ router.post("/rolename", async (req, res) => {
 
 // add fiscal ---------------------------
 router.post("/fiscal", async (req, res) => {
-  const { flag, FiscalID, startYear, endYear } = req.body;
+  const { flag, FiscalID, startYear, endYear, active } = req.body;
   try {
     if (flag === "I") {
       let preuser = await fiscal.findOne({ startYear: startYear });
@@ -647,7 +647,12 @@ router.post("/fiscal", async (req, res) => {
         Message: "success",
       });
     } else if (flag === "S") {
-      const fiscaldata = await fiscal.find();
+      let fiscaldata;
+      if (active === "-1") {
+        fiscaldata = await fiscal.find();
+      } else if (active) {
+        fiscaldata = await fiscal.find({ active: active });
+      }
 
       if (fiscaldata) {
         res.status(201).json({

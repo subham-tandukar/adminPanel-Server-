@@ -283,6 +283,7 @@ router.post("/user", async (req, res) => {
         email,
         password: secPass,
         roleName,
+        status,
       });
 
       await adduser.save();

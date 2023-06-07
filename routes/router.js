@@ -477,13 +477,13 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       if (user.length < 1) {
         return res.status(422).json({
-          message: "User doesn't exist",
+          Message: "User doesn't exist",
         });
       }
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (!result) {
           return res.status(422).json({
-            message: "Password doesn't match",
+            Message: "Password doesn't match",
           });
         }
         if (result) {
@@ -524,7 +524,7 @@ router.post("/login", (req, res, next) => {
     })
     .catch((err) => {
       res.status(422).json({
-        message: err,
+        Message: err,
       });
     });
 });
